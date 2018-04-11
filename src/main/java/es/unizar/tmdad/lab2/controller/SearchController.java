@@ -24,7 +24,7 @@ public class SearchController {
 	public SearchResults search(@RequestParam("q") String q, Model m) {
 		return twitter.search(q);
 	}
-	
+
 	@RequestMapping("/trends")
 	public Trends trends(@RequestParam("c") String c, Model m) {
 		return twitter.trends(c);
@@ -35,4 +35,11 @@ public class SearchController {
 	public SearchResults handleUncategorizedApiException(Model m) {
 		return twitter.emptyAnswer();
 	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(NullPointerException.class)
+	public Trends handleNullPointerException(Model m) {
+		return twitter.trendsEmptyAnswer();
+	}
+
 }

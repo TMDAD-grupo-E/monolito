@@ -10,6 +10,8 @@ import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Service;
 
+import es.unizar.tmdad.lab2.utils.CountryAdapter;
+
 @Service
 public class TwitterLookupService {
 	@Value("${twitter.consumerKey}")
@@ -24,19 +26,23 @@ public class TwitterLookupService {
 	@Value("${twitter.accessTokenSecret}")
 	private String accessTokenSecret;
 
-	private static final long WORLDWIDE_WOE = 1L;
+	CountryAdapter adapter = new CountryAdapter();
 
 	public SearchResults search(String query) {
 		Twitter twitter = new TwitterTemplate(consumerKey, consumerSecret, accessToken, accessTokenSecret);
 		return twitter.searchOperations().search(query);
 	}
 
-	public Trends trends(String query) {
+	public Trends trends(String woeid) {
 		Twitter twitter = new TwitterTemplate(consumerKey, consumerSecret, accessToken, accessTokenSecret);
-		return twitter.searchOperations().getLocalTrends(WORLDWIDE_WOE);
+		return twitter.searchOperations().getLocalTrends(adapter.getWOEId(woeid));
 	}
 
 	public SearchResults emptyAnswer() {
 		return new SearchResults(Collections.emptyList(), new SearchMetadata(0, 0));
+	}
+
+	public Trends trendsEmptyAnswer() {
+		return new Trends(null, null);
 	}
 }
