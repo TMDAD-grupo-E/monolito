@@ -8,6 +8,7 @@ public class CountryAdapter {
 	HashMap<String, Long> hmap = new HashMap<String, Long>();
 
 	public CountryAdapter() {
+		hmap.put("ALL", (long) 1);
 		hmap.put("BD", (long) 23424759);
 		hmap.put("BE", (long) 23424757);
 		hmap.put("BF", (long) 23424978);
