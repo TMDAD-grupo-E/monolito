@@ -1,6 +1,6 @@
 var subscription = null;
 var newQuery = 0;
-var name = null;
+var country_code = null;
 
 function loadMap() {
     jQuery.noConflict();
@@ -208,9 +208,12 @@ function loadMap() {
           }]
         },
         onRegionClick: function (event, code) {
+            country_code = code;
             name = map.getRegionName(code);
             document.getElementById('country').value = name;
             document.getElementById('map').style.display = "none";
+            document.getElementById('country').style.color = "black";
+
         }
       });
 
@@ -222,46 +225,74 @@ function loadMap() {
     })
 }
 
-function registerTemplate() {
-	template = $("#template").html();
-	Mustache.parse(template);
+function registerSearchCountry() {
+    jQuery.noConflict();
+    jQuery(function(){
+      var $ = jQuery;
+
+        $("#search").submit(function(event) {
+            event.preventDefault();
+            if (country_code != null) {
+                 console.log("country_code", country_code);
+                 var target = $(this).attr('action');
+                 $.get(target, {c: country_code} )
+                    .done( function(data) {
+                       var template = $("#hashtags_template").html();
+                        Mustache.parse(template);
+                        var rendered = Mustache.render(template, data);
+                        $('#hashtags').empty().html(rendered);
+                        registerSearchHashtag();
+
+                     }).fail(function() {
+                     $("#hashtags").empty();
+                     });
+            }
+            else {
+                console.log("country_code", country_code);
+                document.getElementById('country').style.color = "red";
+            }
+        });
+
+    })
+
 }
 
-function setConnected(connected) {
-	var search = $('#submitsearch');
-	search.prop('disabled', !connected);
+function registerSearchGlobal() {
+
+
 }
 
-function registerSendQueryAndConnect() {
-    var socket = new SockJS("/twitter");
-    var stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-    });
-	$("#search").submit(
-			function(event) {
-				event.preventDefault();
-				if (subscription) {
-					subscription.unsubscribe();
-				}
-				var query = $("#q").val();
-				stompClient.send("/app/search", {}, query);
-				newQuery = 1;
-				subscription = stompClient.subscribe("/queue/search/" + query, function(data) {
-					var resultsBlock = $("#resultsBlock");
-					if (newQuery) {
-                        resultsBlock.empty();
-						newQuery = 0;
-					}
-					var tweet = JSON.parse(data.body);
-                    resultsBlock.prepend(Mustache.render(template, tweet));
-				});
-			});
+
+function registerSearchHashtag() {
+
+    jQuery.noConflict();
+    jQuery(function(){
+      var $ = jQuery;
+
+        $("#search_hashtag").submit(function(event) {
+            event.preventDefault();
+
+            var target=$(this).attr('action');
+            var query =$("#hash_button").val();
+
+            $.get(target, {q: query} )
+                .done( function(data) {
+                    var template = $("#mustache_template").html();
+                      Mustache.parse(template);
+                      var rendered = Mustache.render(template, data);
+                      $('#resultsBlock').empty().html(rendered);
+                }).fail(function() {
+                $("#resultsBlock").empty();
+            });
+
+        });
+
+    })
 }
+
 
 $(document).ready(function() {
     loadMap();
-	registerTemplate();
-	registerSendQueryAndConnect();
+    registerSearchCountry();
+    //registerSearchGlobal();
 });

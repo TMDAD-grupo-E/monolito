@@ -102,7 +102,9 @@
     th:src="@{/assets/jquery-jvectormap-world-mill-en.js}"></script>
 
     <!-- Latest compiled and minified JavaScript -->
-    <script id="template" type="x-tmpl-mustache">
+    <script id="mustache_template" type="x-tmpl-mustache">
+        {{#tweets}}
+
         <div class="card p-3">
             <div class="card-body">
                 <h5 class="card-title">
@@ -115,6 +117,17 @@
                 <p class="card-text">{{unmodifiedText}}</p>
             </div>
         </div>
+
+        {{/tweets}}
+    </script>
+
+    <script id="hashtags_template" type="x-tmpl-mustache">
+        {{#trends}}
+        <form class="p-3" id="search_hashtag" action="search" method="get">
+                <button class="btn btn-link" id="hash_button" name="q" type="submit" style="color: black" value="{{query}}"><span class="fas fa-hashtag"></span>{{name}}</button>
+        </form>
+
+        {{/trends}}
     </script>
 
 
@@ -122,19 +135,19 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Twitter trendings</a>
+        <a class="navbar-brand" href="#">Twitter Trendings</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsDefault">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Trending topics</a>
+                    <a class="btn" role="button" target="_blank" style="color: white">Global Trending Topics</a>
                 </li>
             </ul>
 
 
-            <form class="form-inline my-2 my-lg-0" id="search" action="search" method="get">
+            <form class="form-inline my-2 my-lg-0" id="search" action="trends" method="get">
                 <input class="form-control mr-sm-2" type="button" id="country" value="Select a country"/>
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
@@ -143,12 +156,22 @@
     </nav>
 
 
-    <div id="map" class="map" style="display: none; width: 600px; height: 400px"></div>
+    <div id="map" class="map" style="display: none; width: 100%; height: 400px" ></div>
 
 
-    <div class="container-fluid">
-        <div class="card-columns mt-3" id="resultsBlock"></div>
+
+    <div class='wrapper'>
+        <div class="container-fluid firstDiv">
+            <div class="card-columns mt-3" id="hashtags"></div>
+        </div>
+
+        <div class="container-fluid secondDiv">
+            <div class="card-columns mt-3" id="resultsBlock"></div>
+        </div>
     </div>
+
+
+
 
      <script
              src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"

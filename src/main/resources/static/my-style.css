@@ -3,3 +3,11 @@ body {
   padding-top: 3.5rem;
 }
 
+.wrapper{
+  position: relative;
+}
+
+.firstDiv, .secondDiv{
+  position: absolute;
+}
+
