@@ -1,18 +1,14 @@
 package es.unizar.tmdad.lab2.controller;
 
+import es.unizar.tmdad.lab2.service.TwitterLookupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.social.UncategorizedApiException;
 import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Trends;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import es.unizar.tmdad.lab2.service.TwitterLookupService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SearchController {
@@ -20,10 +16,16 @@ public class SearchController {
 	@Autowired
 	TwitterLookupService twitter;
 
-	@RequestMapping("/search")
+	@MessageMapping("/search")
+	public void search(String q) {
+		twitter.search(q);
+	}
+
+	/*@RequestMapping("/search")
 	public SearchResults search(@RequestParam("q") String q, Model m) {
 		return twitter.search(q);
-	}
+	}*/
+
 
 	@RequestMapping("/trends")
 	public Trends trends(@RequestParam("c") String c, Model m) {
@@ -32,7 +34,7 @@ public class SearchController {
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(UncategorizedApiException.class)
-	public SearchResults handleUncategorizedApiException(Model m) {
+	public SearchResults handleUncategorizedApiException() {
 		return twitter.emptyAnswer();
 	}
 

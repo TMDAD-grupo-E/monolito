@@ -18,7 +18,7 @@ apply plugin: 'org.springframework.boot'
 group = 'es.unizar.tmdad'
 version = '2018'
 sourceCompatibility = 1.8
-jar.baseName = "tmdad-lab2-twitter-flow"
+jar.baseName = "tmdad-monolito"
 
 repositories {
     mavenCentral()
@@ -34,7 +34,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-social-twitter")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    compile("org.springframework.boot:spring-boot-starter-websocket")
+    compile('org.springframework.boot:spring-boot-starter-websocket')
     compile("org.springframework.boot:spring-boot-starter-integration")
     compile("org.springframework:spring-messaging")
     compile("org.springframework.integration:spring-integration-java-dsl:1.2.1.RELEASE")
@@ -42,8 +42,8 @@ dependencies {
     compile("org.webjars:bootstrap:${boostrapVersion}")
     compile("org.webjars:font-awesome:${fontawesomeVersion}")
     compile("org.webjars.bower:mustache:${mustacheVersion}")
-    compile("org.webjars:stomp-websocket:2.3.1-1")
-    compile("org.webjars:sockjs-client:0.3.4-1")
+    compile("org.webjars:stomp-websocket:2.3.3")
+    compile("org.webjars:sockjs-client:1.0.2")
     compile("commons-beanutils:commons-beanutils:1.9.2")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
