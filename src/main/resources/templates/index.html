@@ -103,7 +103,6 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script id="mustache_template" type="x-tmpl-mustache">
-        {{#tweets}}
 
         <div class="card p-3">
             <div class="card-body">
@@ -118,14 +117,13 @@
             </div>
         </div>
 
-        {{/tweets}}
     </script>
 
     <script id="hashtags_template" type="x-tmpl-mustache">
         {{#trends}}
-        <form class="p-3" id="search_hashtag" action="search" method="get">
-                <button class="btn btn-link" id="hash_button" name="q" type="submit" style="color: black" value="{{query}}"><span class="fas fa-hashtag"></span>{{name}}</button>
-        </form>
+            <form id="search_hashtag" action="search" method="get">
+                    <button class="btn btn-link" id="hash_button" name="q" type="submit" style="color: black" value="{{query}}"><span class="fas fa-hashtag"></span>{{name}}</button>
+            </form>
 
         {{/trends}}
     </script>
@@ -141,8 +139,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarsDefault">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="btn" role="button" target="_blank" style="color: white">Global Trending Topics</a>
+                <li class="nav-item" id="global_trendings" method="get">
+                   <!-- <a class="btn" id="button_global" role="button" target="_blank"  action="trends" style="color: white">Global Trending Topics</a> -->
+                    <a class="btn" id="button_global" type="submit button" target="_blank"  action="trends" style="color: white">Global Trending Topics</a>
+
                 </li>
             </ul>
 
@@ -185,12 +185,17 @@
      <script defer="" src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"
              th:src="@{/webjars/font-awesome/5.0.6/svg-with-js/js/fontawesome-all.js}"></script>
 
-     <script
+
+     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+
+     <!--<script
              src="http://cdn.jsdelivr.net/webjars/sockjs-client/0.3.4-1/sockjs.js"
              th:src="@{/webjars/sockjs-client/0.3.4-1/sockjs.js}"></script>
      <script
              src="http://cdn.jsdelivr.net/webjars/stomp-websocket/2.3.1-1/stomp.js"
-             th:src="@{/webjars/stomp-websocket/2.3.1-1/stomp.js}"></script>
+             th:src="@{/webjars/stomp-websocket/2.3.1-1/stomp.js}"></script>-->
      <script th:src="@{/functions.js}"
              src="../static/functions.js"></script>
 

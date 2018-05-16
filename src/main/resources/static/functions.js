@@ -225,6 +225,29 @@ function loadMap() {
     })
 }
 
+
+function registerTemplate() {
+    jQuery.noConflict();
+    jQuery(function(){
+      var $ = jQuery;
+      tweets_template = $("#mustache_template").html();
+      Mustache.parse(tweets_template);
+    });
+}
+
+function connect() {
+    var sock = new SockJS('/twitter');
+    client = Stomp.over(sock);
+    client.connect({}, function(state) {
+        console.log('State ' + state);
+    })
+}
+
+function addTweet(tweet) {
+    $("#resultsBlock").prepend(Mustache.render(tweet_template, JSON.parse(tweet.body)));
+    console.log("Tweet added")
+}
+
 function registerSearchCountry() {
     jQuery.noConflict();
     jQuery(function(){
@@ -241,6 +264,8 @@ function registerSearchCountry() {
                         Mustache.parse(template);
                         var rendered = Mustache.render(template, data);
                         $('#hashtags').empty().html(rendered);
+                        registerTemplate();
+                        connect();
                         registerSearchHashtag();
 
                      }).fail(function() {
@@ -259,6 +284,35 @@ function registerSearchCountry() {
 
 function registerSearchGlobal() {
 
+    jQuery.noConflict();
+    jQuery(function(){
+      var $ = jQuery;
+
+      //document.getElementById('button_global').addEventListener("click", globalFunction)
+
+        $("#global_trendings").submit(function(event) {
+            console.log("entro"," en global trendings");
+            event.preventDefault();
+            var target = document.getElementById('button_global').action;
+            $.get(target, {c: "ALL"})
+                .done(function(data) {
+                    var template = $("#hashtags_template").html();
+                    Mustache.parse(template);
+                    var rendered = Mustache.render(template, data);
+                    $('#hashtags').empty().html(rendered);
+
+                    registerTemplate();
+                    connect();
+                    registerSearchHashtag();
+
+                 }).fail(function() {
+                    $("#hashtags").empty();
+                 });
+        });
+    })
+}
+
+function globalFunction() {
 
 }
 
@@ -271,11 +325,26 @@ function registerSearchHashtag() {
 
         $("#search_hashtag").submit(function(event) {
             event.preventDefault();
+            console.log("hash: ", document.getElementById('hash_button').value)
 
             var target=$(this).attr('action');
             var query =$("#hash_button").val();
 
-            $.get(target, {q: query} )
+            if (subscription != null) {
+                $("#resultsBlock").empty();
+                subscription.unsubscribe();
+                console.log("Unsubscription")
+
+            }
+
+            client.send("/app/" + target, {}, query);
+            subscription = client.subscribe('/queue/search/' + query, addTweet);
+            console.log("Client subscribed");
+
+
+
+
+            /*$.get(target, {q: query} )
                 .done( function(data) {
                     var template = $("#mustache_template").html();
                       Mustache.parse(template);
@@ -283,7 +352,7 @@ function registerSearchHashtag() {
                       $('#resultsBlock').empty().html(rendered);
                 }).fail(function() {
                 $("#resultsBlock").empty();
-            });
+            });*/
 
         });
 
@@ -294,5 +363,5 @@ function registerSearchHashtag() {
 $(document).ready(function() {
     loadMap();
     registerSearchCountry();
-    //registerSearchGlobal();
+    registerSearchGlobal();
 });
